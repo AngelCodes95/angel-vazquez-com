@@ -186,7 +186,53 @@
             stroke: white;
         }
         
+        /* Portfolio Caption Animation */
+        .portfolio-hint {
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: clamp(10px, 2.5vw, 12px);
+            font-weight: 300;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1002;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: portfolioHintCycle 12s infinite;
+            white-space: nowrap;
+            text-align: center;
+            transform-origin: center;
+        }
+
         /* Animations */
+        @keyframes portfolioHintCycle {
+            0%, 8.33%, 83.33%, 100% { 
+                opacity: 0; 
+                transform: translateX(-50%) scale(1);
+            }
+            16.67%, 66.67% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1);
+            }
+            70.83% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1.08);
+            }
+            72.92% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1);
+            }
+            75% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1.08);
+            }
+            77.08% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
         @keyframes neonReveal {
             0% { 
                 opacity: 0; 
@@ -240,10 +286,11 @@
                 </a>
             </div>
             <div class="social-row-bottom">
-                <a href="https://angelcodes95.github.io/angel-portfolio-docs" target="_blank" aria-label="Portfolio Documentation">
+                <a href="https://angelcodes95.github.io/angel-portfolio-docs" target="_blank" aria-label="Portfolio Documentation" style="position: relative;">
                     <svg viewBox="0 0 24 24">
                         <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
                     </svg>
+                    <div class="portfolio-hint">Portfolio</div>
                 </a>
             </div>
         </div>
