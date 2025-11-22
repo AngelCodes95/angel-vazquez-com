@@ -1,46 +1,43 @@
-# Interactive 3D Pyramid Portfolio
+# Astro Starter Kit: Minimal
 
-A unique portfolio experience featuring interactive 3D wireframe pyramids with physics-based animations and responsive design.
-
-## Live Demo
-
-Visit the live site: **[angel-vazquez.com](https://angel-vazquez.com)**
-
-## Features
-
-- 3D Wireframe Pyramids with real-time rotation
-- Interactive controls to add/remove pyramids and adjust speed
-- Responsive design that maintains triangular layout from desktop to mobile  
-- Mobile optimized with touch zones and hold-to-repeat functionality
-- Physics simulation with collision detection and color-changing effects
-- Falling pyramid rain background animation
-
-## Controls
-
-### Desktop
-- Up/Down arrows: Add/remove pyramids
-- Left/Right arrows: Decrease/increase speed
-
-### Mobile
-- Tap/Hold top/bottom areas: Add/remove pyramids
-- Tap/Hold left/right areas: Decrease/increase speed
-
-## Technologies
-
-- Vanilla JavaScript
-- SVG Graphics
-- CSS3 Animations
-- 3D Mathematics
-- Responsive Design
-
-## Run Locally
-
-```bash
-# Clone the repository
-git clone https://github.com/AngelCodes95/angel-vazquez-com.git
-
-# Open index.html in your browser
-open index.html
+```sh
+npm create astro@latest -- --template minimal
 ```
 
-Built by [Angel Vazquez](https://github.com/AngelCodes95) | Portfolio: [angel-vazquez.com](https://angel-vazquez.com)
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+
+## 🚀 Project Structure
+
+Inside of your Astro project, you'll see the following folders and files:
+
+```text
+/
+├── public/
+├── src/
+│   └── pages/
+│       └── index.astro
+└── package.json
+```
+
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+
+Any static assets, like images, can be placed in the `public/` directory.
+
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
