@@ -5,15 +5,12 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import astro from 'eslint-plugin-astro';
 
-export default [
+export default tseslint.config(
   {
     ignores: ['dist/', 'node_modules/', '.astro/', 'legacy/'],
   },
-  // Base JavaScript linting for all files
   js.configs.recommended,
-  // Astro files
   ...astro.configs.recommended,
-  // TypeScript files with strict type checking
   {
     files: ['**/*.{ts,tsx}'],
     extends: [...tseslint.configs.strictTypeChecked],
@@ -23,7 +20,8 @@ export default [
     },
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.json',
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
         ecmaFeatures: { jsx: true },
       },
     },
@@ -43,4 +41,8 @@ export default [
       '@typescript-eslint/strict-boolean-expressions': 'error',
     },
   },
-];
+  {
+    files: ['**/*.{js,mjs,cjs}'],
+    ...tseslint.configs.disableTypeChecked,
+  }
+);
