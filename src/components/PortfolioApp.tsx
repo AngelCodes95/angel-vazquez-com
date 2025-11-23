@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { DEFAULT_GAME_CONFIG } from '../types';
 import { PyramidCanvas } from './PyramidCanvas';
 import { FallingPyramidsBackground } from './FallingPyramidsBackground';
-import { ControlPanel } from './ControlPanel';
 import { PortfolioContent } from './PortfolioContent';
+import { DEFAULT_GAME_CONFIG } from '../types';
 
 export function PortfolioApp() {
   const [pyramidCount, setPyramidCount] = useState(
@@ -15,20 +14,20 @@ export function PortfolioApp() {
 
   const handlePyramidCountChange = (delta: number) => {
     setPyramidCount((prev) => {
-      const next = prev + delta;
+      const newCount = prev + delta;
       return Math.max(
         DEFAULT_GAME_CONFIG.minPyramids,
-        Math.min(DEFAULT_GAME_CONFIG.maxPyramids, next)
+        Math.min(DEFAULT_GAME_CONFIG.maxPyramids, newCount)
       );
     });
   };
 
   const handleSpeedChange = (delta: number) => {
     setSpeedMultiplier((prev) => {
-      const next = prev + delta;
+      const newSpeed = prev + delta;
       return Math.max(
         DEFAULT_GAME_CONFIG.minSpeed,
-        Math.min(DEFAULT_GAME_CONFIG.maxSpeed, next)
+        Math.min(DEFAULT_GAME_CONFIG.maxSpeed, newSpeed)
       );
     });
   };
@@ -40,8 +39,7 @@ export function PortfolioApp() {
         pyramidCount={pyramidCount}
         speedMultiplier={speedMultiplier}
       />
-      <PortfolioContent />
-      <ControlPanel
+      <PortfolioContent
         pyramidCount={pyramidCount}
         speedMultiplier={speedMultiplier}
         onPyramidCountChange={handlePyramidCountChange}

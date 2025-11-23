@@ -18,19 +18,15 @@ interface PyramidCanvasProps {
   speedMultiplier: number;
 }
 
-interface PyramidWithElement extends PyramidState {
-  svgElement: SVGSVGElement;
-}
-
 export function PyramidCanvas({
   pyramidCount,
   speedMultiplier,
 }: PyramidCanvasProps) {
-  const pyramidsRef = useRef<PyramidWithElement[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pyramidsRef = useRef<PyramidState[]>([]);
   const animationFrameRef = useRef<number>(0);
   const nextIdRef = useRef(0);
   const previousSpeedRef = useRef(1.0);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle pyramid count changes
   useEffect(() => {
@@ -38,31 +34,11 @@ export function PyramidCanvas({
     const size = calculatePyramidSize();
     const geometry = createPyramidGeometry(size);
     const collisionBounds = calculateCollisionBounds(size);
-    const canvasSize = calculateCanvasSize(size);
 
     if (current.length < pyramidCount) {
       // Add pyramids
       const toAdd = pyramidCount - current.length;
       for (let i = 0; i < toAdd; i++) {
-        // Create SVG element
-        const svgElement = document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'svg'
-        );
-        svgElement.setAttribute(
-          'viewBox',
-          `0 0 ${canvasSize.toString()} ${canvasSize.toString()}`
-        );
-        svgElement.style.position = 'absolute';
-        svgElement.style.width = `${canvasSize.toString()}px`;
-        svgElement.style.height = `${canvasSize.toString()}px`;
-        svgElement.style.pointerEvents = 'none';
-        svgElement.style.zIndex = '1';
-
-        if (containerRef.current) {
-          containerRef.current.appendChild(svgElement);
-        }
-
         current.push({
           id: nextIdRef.current++,
           x: getRandomInt(0, window.innerWidth - collisionBounds.width),
@@ -78,18 +54,11 @@ export function PyramidCanvas({
           size,
           collisionBounds,
           geometry,
-          svgElement,
         });
       }
     } else if (current.length > pyramidCount) {
       // Remove pyramids
-      const toRemove = current.length - pyramidCount;
-      for (let i = 0; i < toRemove; i++) {
-        const pyramid = current.pop();
-        if (pyramid) {
-          pyramid.svgElement.remove();
-        }
-      }
+      pyramidsRef.current = current.slice(0, pyramidCount);
     }
   }, [pyramidCount, speedMultiplier]);
 
@@ -107,7 +76,17 @@ export function PyramidCanvas({
 
   // Animation loop
   useEffect(() => {
-    const updatePyramids = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const updateAndRender = () => {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update and render each pyramid
       pyramidsRef.current.forEach((pyramid) => {
         let nextX = pyramid.x + pyramid.velocityX;
         let nextY = pyramid.y + pyramid.velocityY;
@@ -141,18 +120,61 @@ export function PyramidCanvas({
         pyramid.rotationX += pyramid.rotationSpeedX;
         pyramid.rotationY += pyramid.rotationSpeedY;
 
-        // Update SVG position
-        pyramid.svgElement.style.left = `${pyramid.x.toString()}px`;
-        pyramid.svgElement.style.top = `${pyramid.y.toString()}px`;
+        // Render pyramid
+        const canvasSize = calculateCanvasSize(pyramid.size);
 
-        // Render pyramid (direct DOM manipulation)
-        renderPyramid(pyramid);
+        // Rotate vertices
+        const rotatedBase = pyramid.geometry.baseVertices.map((vertex) =>
+          rotatePoint(vertex, pyramid.rotationX, pyramid.rotationY)
+        );
+        const rotatedApex = rotatePoint(
+          pyramid.geometry.apexVertex,
+          pyramid.rotationX,
+          pyramid.rotationY
+        );
+
+        // Project to 2D
+        const projectedBase = rotatedBase.map((vertex) =>
+          project3D(vertex.x, vertex.y, vertex.z, canvasSize)
+        );
+        const projectedApex = project3D(
+          rotatedApex.x,
+          rotatedApex.y,
+          rotatedApex.z,
+          canvasSize
+        );
+
+        // Define edges
+        const edges: Array<
+          [{ x: number; y: number }, { x: number; y: number }]
+        > = [
+          // Base square
+          [projectedBase[0], projectedBase[1]],
+          [projectedBase[1], projectedBase[2]],
+          [projectedBase[2], projectedBase[3]],
+          [projectedBase[3], projectedBase[0]],
+          // Apex to base
+          [projectedApex, projectedBase[0]],
+          [projectedApex, projectedBase[1]],
+          [projectedApex, projectedBase[2]],
+          [projectedApex, projectedBase[3]],
+        ];
+
+        // Draw edges
+        ctx.strokeStyle = pyramid.color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        edges.forEach(([start, end]) => {
+          ctx.moveTo(pyramid.x + start.x, pyramid.y + start.y);
+          ctx.lineTo(pyramid.x + end.x, pyramid.y + end.y);
+        });
+        ctx.stroke();
       });
 
-      animationFrameRef.current = requestAnimationFrame(updatePyramids);
+      animationFrameRef.current = requestAnimationFrame(updateAndRender);
     };
 
-    animationFrameRef.current = requestAnimationFrame(updatePyramids);
+    animationFrameRef.current = requestAnimationFrame(updateAndRender);
 
     return () => {
       if (animationFrameRef.current > 0) {
@@ -163,11 +185,16 @@ export function PyramidCanvas({
 
   // Handle window resize
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
       const newSize = calculatePyramidSize();
       const newGeometry = createPyramidGeometry(newSize);
       const newCollisionBounds = calculateCollisionBounds(newSize);
-      const newCanvasSize = calculateCanvasSize(newSize);
 
       pyramidsRef.current.forEach((pyramid) => {
         pyramid.size = newSize;
@@ -181,16 +208,12 @@ export function PyramidCanvas({
           pyramid.y,
           window.innerHeight - newCollisionBounds.height
         );
-
-        // Update SVG element size
-        pyramid.svgElement.setAttribute(
-          'viewBox',
-          `0 0 ${newCanvasSize.toString()} ${newCanvasSize.toString()}`
-        );
-        pyramid.svgElement.style.width = `${newCanvasSize.toString()}px`;
-        pyramid.svgElement.style.height = `${newCanvasSize.toString()}px`;
       });
     };
+
+    // Set initial size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     window.addEventListener('resize', handleResize);
     return () => {
@@ -199,64 +222,10 @@ export function PyramidCanvas({
   }, []);
 
   return (
-    <div ref={containerRef} className="fixed top-0 left-0 w-full h-full" />
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none"
+      style={{ zIndex: 1 }}
+    />
   );
-}
-
-function renderPyramid(pyramid: PyramidWithElement) {
-  const canvasSize = calculateCanvasSize(pyramid.size);
-
-  // Clear existing lines
-  pyramid.svgElement.innerHTML = '';
-
-  // Rotate vertices
-  const rotatedBase = pyramid.geometry.baseVertices.map((vertex) =>
-    rotatePoint(vertex, pyramid.rotationX, pyramid.rotationY)
-  );
-  const rotatedApex = rotatePoint(
-    pyramid.geometry.apexVertex,
-    pyramid.rotationX,
-    pyramid.rotationY
-  );
-
-  // Project to 2D
-  const projectedBase = rotatedBase.map((vertex) =>
-    project3D(vertex.x, vertex.y, vertex.z, canvasSize)
-  );
-  const projectedApex = project3D(
-    rotatedApex.x,
-    rotatedApex.y,
-    rotatedApex.z,
-    canvasSize
-  );
-
-  // Define edges
-  const edges: Array<[{ x: number; y: number }, { x: number; y: number }]> = [
-    // Base square
-    [projectedBase[0], projectedBase[1]],
-    [projectedBase[1], projectedBase[2]],
-    [projectedBase[2], projectedBase[3]],
-    [projectedBase[3], projectedBase[0]],
-    // Apex to base
-    [projectedApex, projectedBase[0]],
-    [projectedApex, projectedBase[1]],
-    [projectedApex, projectedBase[2]],
-    [projectedApex, projectedBase[3]],
-  ];
-
-  // Draw edges
-  edges.forEach(([start, end]) => {
-    const lineElement = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'line'
-    );
-    lineElement.setAttribute('x1', start.x.toString());
-    lineElement.setAttribute('y1', start.y.toString());
-    lineElement.setAttribute('x2', end.x.toString());
-    lineElement.setAttribute('y2', end.y.toString());
-    lineElement.setAttribute('stroke', pyramid.color);
-    lineElement.setAttribute('stroke-width', '1.5');
-    lineElement.setAttribute('fill', 'none');
-    pyramid.svgElement.appendChild(lineElement);
-  });
 }

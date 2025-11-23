@@ -7,39 +7,75 @@ import {
   rotatePoint,
 } from '../lib';
 
+const MAX_FALLING_PYRAMIDS = 30;
+
 export function FallingPyramidsBackground() {
   const [fallingPyramids, setFallingPyramids] = useState<FallingPyramidState[]>(
     []
   );
   const animationFrameRef = useRef<number>(0);
   const nextIdRef = useRef(0);
+  const intervalIdRef = useRef<number | null>(null);
 
   // Spawn new falling pyramids at intervals
   useEffect(() => {
     const spawnPyramid = () => {
-      const newPyramid: FallingPyramidState = {
-        id: nextIdRef.current++,
-        x: Math.random() * (window.innerWidth - 30),
-        y: -50,
-        fallSpeed: Math.random() * 1 + 0.5,
-        rotationX: 0,
-        rotationY: 0,
-        rotationSpeedX: getRandomRotationSpeed(0.01, 0.02) * 0.5,
-        rotationSpeedY: getRandomRotationSpeed(0.01, 0.02),
-        opacity: 0.7,
-        size: 15,
-      };
+      setFallingPyramids((prev) => {
+        // Cap maximum pyramids to prevent memory buildup
+        if (prev.length >= MAX_FALLING_PYRAMIDS) {
+          return prev;
+        }
 
-      setFallingPyramids((prev) => [...prev, newPyramid]);
+        const newPyramid: FallingPyramidState = {
+          id: nextIdRef.current++,
+          x: Math.random() * (window.innerWidth - 30),
+          y: -50,
+          fallSpeed: Math.random() * 1 + 0.5,
+          rotationX: 0,
+          rotationY: 0,
+          rotationSpeedX: getRandomRotationSpeed(0.01, 0.02) * 0.5,
+          rotationSpeedY: getRandomRotationSpeed(0.01, 0.02),
+          opacity: 0.7,
+          size: 15,
+        };
+
+        return [...prev, newPyramid];
+      });
     };
 
-    const intervalId = setInterval(
-      spawnPyramid,
-      DEFAULT_GAME_CONFIG.fallingPyramidInterval
-    );
+    const startInterval = () => {
+      if (intervalIdRef.current === null) {
+        intervalIdRef.current = window.setInterval(
+          spawnPyramid,
+          DEFAULT_GAME_CONFIG.fallingPyramidInterval
+        );
+      }
+    };
+
+    const stopInterval = () => {
+      if (intervalIdRef.current !== null) {
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
+      }
+    };
+
+    // Handle page visibility changes
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopInterval();
+      } else {
+        // Clear accumulated pyramids when returning to tab
+        setFallingPyramids([]);
+        startInterval();
+      }
+    };
+
+    startInterval();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      clearInterval(intervalId);
+      stopInterval();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
