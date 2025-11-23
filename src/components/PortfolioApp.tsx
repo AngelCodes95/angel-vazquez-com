@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PyramidCanvas } from './PyramidCanvas';
 import { FallingPyramidsBackground } from './FallingPyramidsBackground';
 import { PortfolioContent } from './PortfolioContent';
 import { DEFAULT_GAME_CONFIG } from '../types';
+
+export type Theme = 'light' | 'dark';
 
 export function PortfolioApp() {
   const [pyramidCount, setPyramidCount] = useState(
@@ -11,6 +13,21 @@ export function PortfolioApp() {
   const [speedMultiplier, setSpeedMultiplier] = useState(
     DEFAULT_GAME_CONFIG.defaultSpeed
   );
+  const [theme, setTheme] = useState<Theme>('dark');
+
+  // Load theme from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+  }, []);
+
+  // Update document body and localStorage when theme changes
+  useEffect(() => {
+    document.body.className = theme === 'light' ? 'bg-white' : 'bg-black';
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const handlePyramidCountChange = (delta: number) => {
     setPyramidCount((prev) => {
@@ -32,9 +49,13 @@ export function PortfolioApp() {
     });
   };
 
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   return (
     <>
-      <FallingPyramidsBackground />
+      <FallingPyramidsBackground theme={theme} />
       <PyramidCanvas
         pyramidCount={pyramidCount}
         speedMultiplier={speedMultiplier}
@@ -44,6 +65,8 @@ export function PortfolioApp() {
         speedMultiplier={speedMultiplier}
         onPyramidCountChange={handlePyramidCountChange}
         onSpeedChange={handleSpeedChange}
+        theme={theme}
+        onThemeToggle={toggleTheme}
       />
     </>
   );

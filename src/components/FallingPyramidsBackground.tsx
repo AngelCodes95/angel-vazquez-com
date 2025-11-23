@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import type { FallingPyramidState } from '../types';
 import { DEFAULT_GAME_CONFIG } from '../types';
+import type { Theme } from './PortfolioApp';
 import {
   getRandomRotationSpeed,
   createSmallPyramidGeometry,
@@ -9,7 +10,13 @@ import {
 
 const MAX_FALLING_PYRAMIDS = 30;
 
-export function FallingPyramidsBackground() {
+interface FallingPyramidsBackgroundProps {
+  theme: Theme;
+}
+
+export function FallingPyramidsBackground({
+  theme,
+}: FallingPyramidsBackgroundProps) {
   const [fallingPyramids, setFallingPyramids] = useState<FallingPyramidState[]>(
     []
   );
@@ -112,7 +119,7 @@ export function FallingPyramidsBackground() {
   return (
     <>
       {fallingPyramids.map((pyramid) => (
-        <FallingPyramidSVG key={pyramid.id} pyramid={pyramid} />
+        <FallingPyramidSVG key={pyramid.id} pyramid={pyramid} theme={theme} />
       ))}
     </>
   );
@@ -120,9 +127,10 @@ export function FallingPyramidsBackground() {
 
 interface FallingPyramidSVGProps {
   pyramid: FallingPyramidState;
+  theme: Theme;
 }
 
-function FallingPyramidSVG({ pyramid }: FallingPyramidSVGProps) {
+function FallingPyramidSVG({ pyramid, theme }: FallingPyramidSVGProps) {
   const canvasSize = 30;
   const geometry = createSmallPyramidGeometry(pyramid.size);
 
@@ -180,7 +188,7 @@ function FallingPyramidSVG({ pyramid }: FallingPyramidSVGProps) {
           y1={start.y}
           x2={end.x}
           y2={end.y}
-          stroke="white"
+          stroke={theme === 'light' ? 'black' : 'white'}
           strokeWidth="1"
           fill="none"
         />
