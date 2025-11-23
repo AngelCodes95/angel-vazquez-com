@@ -22,105 +22,98 @@ export function PyramidCanvas({
   pyramidCount,
   speedMultiplier,
 }: PyramidCanvasProps) {
-  const [pyramids, setPyramids] = useState<PyramidState[]>([]);
-  const animationFrameRef = useRef<number>(0);
+  const [, forceUpdate] = useState({});
   const pyramidsRef = useRef<PyramidState[]>([]);
+  const animationFrameRef = useRef<number>(0);
+  const nextIdRef = useRef(0);
+  const previousSpeedRef = useRef(1.0);
 
-  // Initialize pyramids on mount and when count changes
+  // Handle pyramid count changes
   useEffect(() => {
+    const current = pyramidsRef.current;
     const size = calculatePyramidSize();
     const geometry = createPyramidGeometry(size);
     const collisionBounds = calculateCollisionBounds(size);
 
-    const createPyramid = (id: number): PyramidState => ({
-      id,
-      x: getRandomInt(0, window.innerWidth - collisionBounds.width),
-      y: getRandomInt(0, window.innerHeight - collisionBounds.height),
-      velocityX: getRandomVelocity(1, 2),
-      velocityY: getRandomVelocity(1, 2),
-      rotationX: 0,
-      rotationY: 0,
-      rotationSpeedX: getRandomRotationSpeed(0.005, 0.02) * 0.5,
-      rotationSpeedY: getRandomRotationSpeed(0.005, 0.02),
-      color: getRandomColor(),
-      size,
-      collisionBounds,
-      geometry,
-    });
+    if (current.length < pyramidCount) {
+      // Add pyramids
+      const toAdd = pyramidCount - current.length;
+      for (let i = 0; i < toAdd; i++) {
+        current.push({
+          id: nextIdRef.current++,
+          x: getRandomInt(0, window.innerWidth - collisionBounds.width),
+          y: getRandomInt(0, window.innerHeight - collisionBounds.height),
+          velocityX: getRandomVelocity(1, 2) * speedMultiplier,
+          velocityY: getRandomVelocity(1, 2) * speedMultiplier,
+          rotationX: 0,
+          rotationY: 0,
+          rotationSpeedX:
+            getRandomRotationSpeed(0.005, 0.02) * 0.5 * speedMultiplier,
+          rotationSpeedY: getRandomRotationSpeed(0.005, 0.02) * speedMultiplier,
+          color: getRandomColor(),
+          size,
+          collisionBounds,
+          geometry,
+        });
+      }
+      forceUpdate({});
+    } else if (current.length > pyramidCount) {
+      // Remove pyramids
+      pyramidsRef.current = current.slice(0, pyramidCount);
+      forceUpdate({});
+    }
+  }, [pyramidCount, speedMultiplier]);
 
-    const newPyramids = Array.from({ length: pyramidCount }, (_, i) =>
-      createPyramid(i)
-    );
-    setPyramids(newPyramids);
-    pyramidsRef.current = newPyramids;
-  }, [pyramidCount]);
-
-  // Apply speed multiplier changes
+  // Handle speed multiplier changes
   useEffect(() => {
-    setPyramids((prev) =>
-      prev.map((pyramid) => ({
-        ...pyramid,
-        velocityX:
-          (pyramid.velocityX / (pyramidsRef.current[0]?.velocityX || 1)) *
-          speedMultiplier,
-        velocityY:
-          (pyramid.velocityY / (pyramidsRef.current[0]?.velocityY || 1)) *
-          speedMultiplier,
-      }))
-    );
+    const multiplier = speedMultiplier / previousSpeedRef.current;
+    pyramidsRef.current.forEach((pyramid) => {
+      pyramid.velocityX *= multiplier;
+      pyramid.velocityY *= multiplier;
+      pyramid.rotationSpeedX *= multiplier;
+      pyramid.rotationSpeedY *= multiplier;
+    });
+    previousSpeedRef.current = speedMultiplier;
   }, [speedMultiplier]);
 
   // Animation loop
   useEffect(() => {
     const updatePyramids = () => {
-      setPyramids((prev) => {
-        return prev.map((pyramid) => {
-          let nextX = pyramid.x + pyramid.velocityX;
-          let nextY = pyramid.y + pyramid.velocityY;
-          let newVelocityX = pyramid.velocityX;
-          let newVelocityY = pyramid.velocityY;
-          let newColor = pyramid.color;
+      pyramidsRef.current.forEach((pyramid) => {
+        let nextX = pyramid.x + pyramid.velocityX;
+        let nextY = pyramid.y + pyramid.velocityY;
 
-          // Wall collision detection
-          if (nextX <= 0) {
-            nextX = 0;
-            newVelocityX = Math.abs(pyramid.velocityX);
-            newColor = getRandomColor();
-          } else if (
-            nextX + pyramid.collisionBounds.width >=
-            window.innerWidth
-          ) {
-            nextX = window.innerWidth - pyramid.collisionBounds.width;
-            newVelocityX = -Math.abs(pyramid.velocityX);
-            newColor = getRandomColor();
-          }
+        // Wall collision detection
+        if (nextX <= 0) {
+          nextX = 0;
+          pyramid.velocityX = Math.abs(pyramid.velocityX);
+          pyramid.color = getRandomColor();
+        } else if (nextX + pyramid.collisionBounds.width >= window.innerWidth) {
+          nextX = window.innerWidth - pyramid.collisionBounds.width;
+          pyramid.velocityX = -Math.abs(pyramid.velocityX);
+          pyramid.color = getRandomColor();
+        }
 
-          if (nextY <= 0) {
-            nextY = 0;
-            newVelocityY = Math.abs(pyramid.velocityY);
-            newColor = getRandomColor();
-          } else if (
-            nextY + pyramid.collisionBounds.height >=
-            window.innerHeight
-          ) {
-            nextY = window.innerHeight - pyramid.collisionBounds.height;
-            newVelocityY = -Math.abs(pyramid.velocityY);
-            newColor = getRandomColor();
-          }
+        if (nextY <= 0) {
+          nextY = 0;
+          pyramid.velocityY = Math.abs(pyramid.velocityY);
+          pyramid.color = getRandomColor();
+        } else if (
+          nextY + pyramid.collisionBounds.height >=
+          window.innerHeight
+        ) {
+          nextY = window.innerHeight - pyramid.collisionBounds.height;
+          pyramid.velocityY = -Math.abs(pyramid.velocityY);
+          pyramid.color = getRandomColor();
+        }
 
-          return {
-            ...pyramid,
-            x: nextX,
-            y: nextY,
-            velocityX: newVelocityX,
-            velocityY: newVelocityY,
-            rotationX: pyramid.rotationX + pyramid.rotationSpeedX,
-            rotationY: pyramid.rotationY + pyramid.rotationSpeedY,
-            color: newColor,
-          };
-        });
+        pyramid.x = nextX;
+        pyramid.y = nextY;
+        pyramid.rotationX += pyramid.rotationSpeedX;
+        pyramid.rotationY += pyramid.rotationSpeedY;
       });
 
+      forceUpdate({});
       animationFrameRef.current = requestAnimationFrame(updatePyramids);
     };
 
@@ -140,19 +133,20 @@ export function PyramidCanvas({
       const newGeometry = createPyramidGeometry(newSize);
       const newCollisionBounds = calculateCollisionBounds(newSize);
 
-      setPyramids((prev) =>
-        prev.map((pyramid) => ({
-          ...pyramid,
-          size: newSize,
-          geometry: newGeometry,
-          collisionBounds: newCollisionBounds,
-          x: Math.min(pyramid.x, window.innerWidth - newCollisionBounds.width),
-          y: Math.min(
-            pyramid.y,
-            window.innerHeight - newCollisionBounds.height
-          ),
-        }))
-      );
+      pyramidsRef.current.forEach((pyramid) => {
+        pyramid.size = newSize;
+        pyramid.geometry = newGeometry;
+        pyramid.collisionBounds = newCollisionBounds;
+        pyramid.x = Math.min(
+          pyramid.x,
+          window.innerWidth - newCollisionBounds.width
+        );
+        pyramid.y = Math.min(
+          pyramid.y,
+          window.innerHeight - newCollisionBounds.height
+        );
+      });
+      forceUpdate({});
     };
 
     window.addEventListener('resize', handleResize);
@@ -163,7 +157,7 @@ export function PyramidCanvas({
 
   return (
     <>
-      {pyramids.map((pyramid) => (
+      {pyramidsRef.current.map((pyramid) => (
         <PyramidSVG key={pyramid.id} pyramid={pyramid} />
       ))}
     </>
