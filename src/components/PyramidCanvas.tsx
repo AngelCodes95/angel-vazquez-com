@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { PyramidState } from '../types';
 import {
   getRandomInt,
@@ -18,15 +18,19 @@ interface PyramidCanvasProps {
   speedMultiplier: number;
 }
 
+interface PyramidWithElement extends PyramidState {
+  svgElement: SVGSVGElement;
+}
+
 export function PyramidCanvas({
   pyramidCount,
   speedMultiplier,
 }: PyramidCanvasProps) {
-  const [, forceUpdate] = useState({});
-  const pyramidsRef = useRef<PyramidState[]>([]);
+  const pyramidsRef = useRef<PyramidWithElement[]>([]);
   const animationFrameRef = useRef<number>(0);
   const nextIdRef = useRef(0);
   const previousSpeedRef = useRef(1.0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle pyramid count changes
   useEffect(() => {
@@ -34,11 +38,31 @@ export function PyramidCanvas({
     const size = calculatePyramidSize();
     const geometry = createPyramidGeometry(size);
     const collisionBounds = calculateCollisionBounds(size);
+    const canvasSize = calculateCanvasSize(size);
 
     if (current.length < pyramidCount) {
       // Add pyramids
       const toAdd = pyramidCount - current.length;
       for (let i = 0; i < toAdd; i++) {
+        // Create SVG element
+        const svgElement = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'svg'
+        );
+        svgElement.setAttribute(
+          'viewBox',
+          `0 0 ${canvasSize.toString()} ${canvasSize.toString()}`
+        );
+        svgElement.style.position = 'absolute';
+        svgElement.style.width = `${canvasSize.toString()}px`;
+        svgElement.style.height = `${canvasSize.toString()}px`;
+        svgElement.style.pointerEvents = 'none';
+        svgElement.style.zIndex = '1';
+
+        if (containerRef.current) {
+          containerRef.current.appendChild(svgElement);
+        }
+
         current.push({
           id: nextIdRef.current++,
           x: getRandomInt(0, window.innerWidth - collisionBounds.width),
@@ -54,13 +78,18 @@ export function PyramidCanvas({
           size,
           collisionBounds,
           geometry,
+          svgElement,
         });
       }
-      forceUpdate({});
     } else if (current.length > pyramidCount) {
       // Remove pyramids
-      pyramidsRef.current = current.slice(0, pyramidCount);
-      forceUpdate({});
+      const toRemove = current.length - pyramidCount;
+      for (let i = 0; i < toRemove; i++) {
+        const pyramid = current.pop();
+        if (pyramid) {
+          pyramid.svgElement.remove();
+        }
+      }
     }
   }, [pyramidCount, speedMultiplier]);
 
@@ -111,9 +140,15 @@ export function PyramidCanvas({
         pyramid.y = nextY;
         pyramid.rotationX += pyramid.rotationSpeedX;
         pyramid.rotationY += pyramid.rotationSpeedY;
+
+        // Update SVG position
+        pyramid.svgElement.style.left = `${pyramid.x.toString()}px`;
+        pyramid.svgElement.style.top = `${pyramid.y.toString()}px`;
+
+        // Render pyramid (direct DOM manipulation)
+        renderPyramid(pyramid);
       });
 
-      forceUpdate({});
       animationFrameRef.current = requestAnimationFrame(updatePyramids);
     };
 
@@ -132,6 +167,7 @@ export function PyramidCanvas({
       const newSize = calculatePyramidSize();
       const newGeometry = createPyramidGeometry(newSize);
       const newCollisionBounds = calculateCollisionBounds(newSize);
+      const newCanvasSize = calculateCanvasSize(newSize);
 
       pyramidsRef.current.forEach((pyramid) => {
         pyramid.size = newSize;
@@ -145,8 +181,15 @@ export function PyramidCanvas({
           pyramid.y,
           window.innerHeight - newCollisionBounds.height
         );
+
+        // Update SVG element size
+        pyramid.svgElement.setAttribute(
+          'viewBox',
+          `0 0 ${newCanvasSize.toString()} ${newCanvasSize.toString()}`
+        );
+        pyramid.svgElement.style.width = `${newCanvasSize.toString()}px`;
+        pyramid.svgElement.style.height = `${newCanvasSize.toString()}px`;
       });
-      forceUpdate({});
     };
 
     window.addEventListener('resize', handleResize);
@@ -156,22 +199,17 @@ export function PyramidCanvas({
   }, []);
 
   return (
-    <>
-      {pyramidsRef.current.map((pyramid) => (
-        <PyramidSVG key={pyramid.id} pyramid={pyramid} />
-      ))}
-    </>
+    <div ref={containerRef} className="fixed top-0 left-0 w-full h-full" />
   );
 }
 
-interface PyramidSVGProps {
-  pyramid: PyramidState;
-}
-
-function PyramidSVG({ pyramid }: PyramidSVGProps) {
+function renderPyramid(pyramid: PyramidWithElement) {
   const canvasSize = calculateCanvasSize(pyramid.size);
 
-  // Rotate all vertices
+  // Clear existing lines
+  pyramid.svgElement.innerHTML = '';
+
+  // Rotate vertices
   const rotatedBase = pyramid.geometry.baseVertices.map((vertex) =>
     rotatePoint(vertex, pyramid.rotationX, pyramid.rotationY)
   );
@@ -206,30 +244,19 @@ function PyramidSVG({ pyramid }: PyramidSVGProps) {
     [projectedApex, projectedBase[3]],
   ];
 
-  return (
-    <svg
-      viewBox={`0 0 ${canvasSize.toString()} ${canvasSize.toString()}`}
-      className="absolute pointer-events-none"
-      style={{
-        left: `${pyramid.x.toString()}px`,
-        top: `${pyramid.y.toString()}px`,
-        width: `${canvasSize.toString()}px`,
-        height: `${canvasSize.toString()}px`,
-        zIndex: 1,
-      }}
-    >
-      {edges.map(([start, end], index) => (
-        <line
-          key={index}
-          x1={start.x}
-          y1={start.y}
-          x2={end.x}
-          y2={end.y}
-          stroke={pyramid.color}
-          strokeWidth="1.5"
-          fill="none"
-        />
-      ))}
-    </svg>
-  );
+  // Draw edges
+  edges.forEach(([start, end]) => {
+    const lineElement = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'line'
+    );
+    lineElement.setAttribute('x1', start.x.toString());
+    lineElement.setAttribute('y1', start.y.toString());
+    lineElement.setAttribute('x2', end.x.toString());
+    lineElement.setAttribute('y2', end.y.toString());
+    lineElement.setAttribute('stroke', pyramid.color);
+    lineElement.setAttribute('stroke-width', '1.5');
+    lineElement.setAttribute('fill', 'none');
+    pyramid.svgElement.appendChild(lineElement);
+  });
 }
