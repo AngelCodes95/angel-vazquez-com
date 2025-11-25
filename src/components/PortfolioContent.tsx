@@ -207,7 +207,7 @@ export function PortfolioContent({
         </div>
       </div>
 
-      <div className="fixed bottom-4 right-4 z-[1001] pointer-events-auto flex flex-col gap-4 w-[min(200px,25vw)]">
+      <div className="fixed bottom-12 right-6 md:bottom-4 md:right-4 z-[1001] pointer-events-auto flex flex-col gap-4 w-[min(200px,25vw)]">
         <div className="flex flex-col gap-2">
           <label
             htmlFor="pyramid-count"
