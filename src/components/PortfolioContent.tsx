@@ -225,14 +225,14 @@ export function PortfolioContent({
             type="range"
             min={DEFAULT_GAME_CONFIG.minPyramids}
             max={DEFAULT_GAME_CONFIG.maxPyramids}
-            step="0.01"
+            step="1"
             value={pyramidCount}
             onChange={(e) => {
               const newCount = Math.round(parseFloat(e.target.value));
               const delta = newCount - pyramidCount;
               onPyramidCountChange(delta);
             }}
-            className={`w-full h-1 ${theme === 'light' ? 'bg-black/30' : 'bg-white/30'} rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full ${theme === 'light' ? '[&::-webkit-slider-thumb]:bg-black' : '[&::-webkit-slider-thumb]:bg-white'} [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full ${theme === 'light' ? '[&::-moz-range-thumb]:bg-black' : '[&::-moz-range-thumb]:bg-white'} [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0`}
+            className={`w-full h-1 ${theme === 'light' ? 'bg-black/30' : 'bg-white/30'} rounded-lg appearance-none cursor-pointer focus:outline-none focus-visible:ring-2 ${theme === 'light' ? 'focus-visible:ring-black' : 'focus-visible:ring-white'} focus-visible:ring-offset-2 focus-visible:ring-offset-transparent [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full ${theme === 'light' ? '[&::-webkit-slider-thumb]:bg-black' : '[&::-webkit-slider-thumb]:bg-white'} [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full ${theme === 'light' ? '[&::-moz-range-thumb]:bg-black' : '[&::-moz-range-thumb]:bg-white'} [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-transform [&::-moz-range-thumb]:hover:scale-110`}
           />
         </div>
 
@@ -253,14 +253,14 @@ export function PortfolioContent({
             type="range"
             min={DEFAULT_GAME_CONFIG.minSpeed}
             max={DEFAULT_GAME_CONFIG.maxSpeed}
-            step="0.01"
+            step="1"
             value={speedMultiplier}
             onChange={(e) => {
               const newSpeed = Math.round(parseFloat(e.target.value));
               const delta = newSpeed - speedMultiplier;
               onSpeedChange(delta);
             }}
-            className={`w-full h-1 ${theme === 'light' ? 'bg-black/30' : 'bg-white/30'} rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full ${theme === 'light' ? '[&::-webkit-slider-thumb]:bg-black' : '[&::-webkit-slider-thumb]:bg-white'} [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full ${theme === 'light' ? '[&::-moz-range-thumb]:bg-black' : '[&::-moz-range-thumb]:bg-white'} [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0`}
+            className={`w-full h-1 ${theme === 'light' ? 'bg-black/30' : 'bg-white/30'} rounded-lg appearance-none cursor-pointer focus:outline-none focus-visible:ring-2 ${theme === 'light' ? 'focus-visible:ring-black' : 'focus-visible:ring-white'} focus-visible:ring-offset-2 focus-visible:ring-offset-transparent [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full ${theme === 'light' ? '[&::-webkit-slider-thumb]:bg-black' : '[&::-webkit-slider-thumb]:bg-white'} [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full ${theme === 'light' ? '[&::-moz-range-thumb]:bg-black' : '[&::-moz-range-thumb]:bg-white'} [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-transform [&::-moz-range-thumb]:hover:scale-110`}
           />
         </div>
       </div>
