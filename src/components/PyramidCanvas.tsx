@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import type { PyramidState } from '../types';
 import {
   getRandomInt,
@@ -22,6 +23,7 @@ export function PyramidCanvas({
   pyramidCount,
   speedMultiplier,
 }: PyramidCanvasProps) {
+  const reducedMotion = useReducedMotion();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pyramidsRef = useRef<PyramidState[]>([]);
   const animationFrameRef = useRef<number>(0);
@@ -82,16 +84,65 @@ export function PyramidCanvas({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const updateAndRender = () => {
-      // Clear canvas
+    const renderFrame = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Update and render each pyramid
+      pyramidsRef.current.forEach((pyramid) => {
+        const canvasSize = calculateCanvasSize(pyramid.size);
+
+        const rotatedBase = pyramid.geometry.baseVertices.map((vertex) =>
+          rotatePoint(vertex, pyramid.rotationX, pyramid.rotationY)
+        );
+        const rotatedApex = rotatePoint(
+          pyramid.geometry.apexVertex,
+          pyramid.rotationX,
+          pyramid.rotationY
+        );
+
+        const projectedBase = rotatedBase.map((vertex) =>
+          project3D(vertex.x, vertex.y, vertex.z, canvasSize)
+        );
+        const projectedApex = project3D(
+          rotatedApex.x,
+          rotatedApex.y,
+          rotatedApex.z,
+          canvasSize
+        );
+
+        const edges: Array<
+          [{ x: number; y: number }, { x: number; y: number }]
+        > = [
+          [projectedBase[0], projectedBase[1]],
+          [projectedBase[1], projectedBase[2]],
+          [projectedBase[2], projectedBase[3]],
+          [projectedBase[3], projectedBase[0]],
+          [projectedApex, projectedBase[0]],
+          [projectedApex, projectedBase[1]],
+          [projectedApex, projectedBase[2]],
+          [projectedApex, projectedBase[3]],
+        ];
+
+        ctx.strokeStyle = pyramid.color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        edges.forEach(([start, end]) => {
+          ctx.moveTo(pyramid.x + start.x, pyramid.y + start.y);
+          ctx.lineTo(pyramid.x + end.x, pyramid.y + end.y);
+        });
+        ctx.stroke();
+      });
+    };
+
+    if (reducedMotion) {
+      renderFrame();
+      return;
+    }
+
+    const animate = () => {
       pyramidsRef.current.forEach((pyramid) => {
         let nextX = pyramid.x + pyramid.velocityX;
         let nextY = pyramid.y + pyramid.velocityY;
 
-        // Wall collision detection
         if (nextX <= 0) {
           nextX = 0;
           pyramid.velocityX = Math.abs(pyramid.velocityX);
@@ -119,69 +170,20 @@ export function PyramidCanvas({
         pyramid.y = nextY;
         pyramid.rotationX += pyramid.rotationSpeedX;
         pyramid.rotationY += pyramid.rotationSpeedY;
-
-        // Render pyramid
-        const canvasSize = calculateCanvasSize(pyramid.size);
-
-        // Rotate vertices
-        const rotatedBase = pyramid.geometry.baseVertices.map((vertex) =>
-          rotatePoint(vertex, pyramid.rotationX, pyramid.rotationY)
-        );
-        const rotatedApex = rotatePoint(
-          pyramid.geometry.apexVertex,
-          pyramid.rotationX,
-          pyramid.rotationY
-        );
-
-        // Project to 2D
-        const projectedBase = rotatedBase.map((vertex) =>
-          project3D(vertex.x, vertex.y, vertex.z, canvasSize)
-        );
-        const projectedApex = project3D(
-          rotatedApex.x,
-          rotatedApex.y,
-          rotatedApex.z,
-          canvasSize
-        );
-
-        // Define edges
-        const edges: Array<
-          [{ x: number; y: number }, { x: number; y: number }]
-        > = [
-          // Base square
-          [projectedBase[0], projectedBase[1]],
-          [projectedBase[1], projectedBase[2]],
-          [projectedBase[2], projectedBase[3]],
-          [projectedBase[3], projectedBase[0]],
-          // Apex to base
-          [projectedApex, projectedBase[0]],
-          [projectedApex, projectedBase[1]],
-          [projectedApex, projectedBase[2]],
-          [projectedApex, projectedBase[3]],
-        ];
-
-        // Draw edges
-        ctx.strokeStyle = pyramid.color;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        edges.forEach(([start, end]) => {
-          ctx.moveTo(pyramid.x + start.x, pyramid.y + start.y);
-          ctx.lineTo(pyramid.x + end.x, pyramid.y + end.y);
-        });
-        ctx.stroke();
       });
 
-      animationFrameRef.current = requestAnimationFrame(updateAndRender);
+      renderFrame();
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animationFrameRef.current = requestAnimationFrame(updateAndRender);
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
       if (animationFrameRef.current > 0) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, []);
+  }, [reducedMotion]);
 
   // Handle window resize
   useEffect(() => {
@@ -224,8 +226,7 @@ export function PyramidCanvas({
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full pointer-events-none"
-      style={{ zIndex: 1 }}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none z-canvas"
     />
   );
 }

@@ -32,6 +32,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          PUBLIC_CHAT_API_URL: https://chat.angel-vazquez.com
+          PUBLIC_SHARED_API: ${{ secrets.PUBLIC_SHARED_API }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

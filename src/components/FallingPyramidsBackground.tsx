@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import type { FallingPyramidState } from '../types';
 import { DEFAULT_GAME_CONFIG } from '../types';
 import type { Theme } from './PortfolioApp';
@@ -17,6 +18,7 @@ interface FallingPyramidsBackgroundProps {
 export function FallingPyramidsBackground({
   theme,
 }: FallingPyramidsBackgroundProps) {
+  const reducedMotion = useReducedMotion();
   const [fallingPyramids, setFallingPyramids] = useState<FallingPyramidState[]>(
     []
   );
@@ -24,11 +26,19 @@ export function FallingPyramidsBackground({
   const nextIdRef = useRef(0);
   const intervalIdRef = useRef<number | null>(null);
 
+  // Clear pyramids when reduced motion is enabled
+  useEffect(() => {
+    if (reducedMotion) {
+      setFallingPyramids([]);
+    }
+  }, [reducedMotion]);
+
   // Spawn new falling pyramids at intervals
   useEffect(() => {
+    if (reducedMotion) return;
+
     const spawnPyramid = () => {
       setFallingPyramids((prev) => {
-        // Cap maximum pyramids to prevent memory buildup
         if (prev.length >= MAX_FALLING_PYRAMIDS) {
           return prev;
         }
@@ -66,12 +76,10 @@ export function FallingPyramidsBackground({
       }
     };
 
-    // Handle page visibility changes
     const handleVisibilityChange = () => {
       if (document.hidden) {
         stopInterval();
       } else {
-        // Clear accumulated pyramids when returning to tab
         setFallingPyramids([]);
         startInterval();
       }
@@ -84,13 +92,15 @@ export function FallingPyramidsBackground({
       stopInterval();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [reducedMotion]);
 
   // Animation loop
   useEffect(() => {
+    if (reducedMotion) return;
+
     const updateFallingPyramids = () => {
-      setFallingPyramids((prev) => {
-        return prev
+      setFallingPyramids((prev) =>
+        prev
           .map((pyramid) => ({
             ...pyramid,
             y: pyramid.y + pyramid.fallSpeed,
@@ -101,8 +111,8 @@ export function FallingPyramidsBackground({
           .filter(
             (pyramid) =>
               pyramid.y <= window.innerHeight + 50 && pyramid.opacity > 0
-          );
-      });
+          )
+      );
 
       animationFrameRef.current = requestAnimationFrame(updateFallingPyramids);
     };
@@ -114,7 +124,7 @@ export function FallingPyramidsBackground({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <>
@@ -171,14 +181,13 @@ function FallingPyramidSVG({ pyramid, theme }: FallingPyramidSVGProps) {
   return (
     <svg
       viewBox={`0 0 ${canvasSize.toString()} ${canvasSize.toString()}`}
-      className="absolute pointer-events-none"
+      className="absolute pointer-events-none z-background"
       style={{
         left: `${pyramid.x.toString()}px`,
         top: `${pyramid.y.toString()}px`,
         width: `${canvasSize.toString()}px`,
         height: `${canvasSize.toString()}px`,
         opacity: pyramid.opacity,
-        zIndex: 0,
       }}
     >
       {edges.map(([start, end], index) => (

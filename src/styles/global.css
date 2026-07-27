@@ -1,5 +1,49 @@
 @import 'tailwindcss';
 
+@theme {
+  --z-background: 0;
+  --z-canvas: 1;
+  --z-base: 10;
+  --z-controls: 20;
+  --z-overlay: 30;
+  --z-nav: 40;
+  --z-nav-button: 50;
+  --z-modal-backdrop: 60;
+  --z-modal: 70;
+}
+
+@font-face {
+  font-family: 'Commit Mono';
+  src: url('/fonts/CommitMono-400-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Commit Mono';
+  src: url('/fonts/CommitMono-400-Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Commit Mono';
+  src: url('/fonts/CommitMono-700-Regular.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Commit Mono';
+  src: url('/fonts/CommitMono-700-Italic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 @keyframes neon-reveal {
   0% {
     opacity: 0;
