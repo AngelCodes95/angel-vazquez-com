@@ -163,6 +163,7 @@ export function PortfolioApp() {
       <PyramidCanvas
         pyramidCount={pyramidCount}
         speedMultiplier={speedMultiplier}
+        theme={theme}
       />
       <PortfolioContent
         pyramidCount={pyramidCount}
@@ -174,6 +175,7 @@ export function PortfolioApp() {
         isMobileMenuOpen={isMobileMenuOpen}
         onMobileMenuToggle={handleMobileMenuToggle}
         showTechInfo={showTechInfo}
+        isChatActive={chatMessages.length > 0}
       />
       <ChatInterface
         theme={theme}

@@ -125,7 +125,7 @@ export function ChatInterface({
             }}
             onKeyDown={handleKeyDown}
             disabled={isInputDisabled}
-            placeholder="Ask about Angel..."
+            placeholder="Ask about Angel... first reply may take a few extra seconds"
             className={`flex-1 ${bgColor} ${textColor} ${borderColor} ${placeholderClass} border rounded-lg px-4 py-3 text-[clamp(0.85rem,2.2vw,1rem)] lg:text-[clamp(1.063rem,2.75vw,1.25rem)] focus:outline-none focus:ring-2 ${
               theme === 'light' ? 'focus:ring-black/20' : 'focus:ring-white/20'
             } disabled:opacity-50 shadow-lg backdrop-blur-sm`}

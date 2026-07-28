@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import type { PyramidState } from '../types';
+import type { Theme } from './PortfolioApp';
 import {
   getRandomInt,
   getRandomColor,
@@ -17,11 +18,13 @@ import {
 interface PyramidCanvasProps {
   pyramidCount: number;
   speedMultiplier: number;
+  theme: Theme;
 }
 
 export function PyramidCanvas({
   pyramidCount,
   speedMultiplier,
+  theme,
 }: PyramidCanvasProps) {
   const reducedMotion = useReducedMotion();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -52,7 +55,7 @@ export function PyramidCanvas({
           rotationSpeedX:
             getRandomRotationSpeed(0.005, 0.02) * 0.5 * speedMultiplier,
           rotationSpeedY: getRandomRotationSpeed(0.005, 0.02) * speedMultiplier,
-          color: getRandomColor(),
+          color: getRandomColor(theme),
           size,
           collisionBounds,
           geometry,
@@ -62,7 +65,7 @@ export function PyramidCanvas({
       // Remove pyramids
       pyramidsRef.current = current.slice(0, pyramidCount);
     }
-  }, [pyramidCount, speedMultiplier]);
+  }, [pyramidCount, speedMultiplier, theme]);
 
   // Handle speed multiplier changes
   useEffect(() => {
@@ -146,24 +149,24 @@ export function PyramidCanvas({
         if (nextX <= 0) {
           nextX = 0;
           pyramid.velocityX = Math.abs(pyramid.velocityX);
-          pyramid.color = getRandomColor();
+          pyramid.color = getRandomColor(theme);
         } else if (nextX + pyramid.collisionBounds.width >= window.innerWidth) {
           nextX = window.innerWidth - pyramid.collisionBounds.width;
           pyramid.velocityX = -Math.abs(pyramid.velocityX);
-          pyramid.color = getRandomColor();
+          pyramid.color = getRandomColor(theme);
         }
 
         if (nextY <= 0) {
           nextY = 0;
           pyramid.velocityY = Math.abs(pyramid.velocityY);
-          pyramid.color = getRandomColor();
+          pyramid.color = getRandomColor(theme);
         } else if (
           nextY + pyramid.collisionBounds.height >=
           window.innerHeight
         ) {
           nextY = window.innerHeight - pyramid.collisionBounds.height;
           pyramid.velocityY = -Math.abs(pyramid.velocityY);
-          pyramid.color = getRandomColor();
+          pyramid.color = getRandomColor(theme);
         }
 
         pyramid.x = nextX;
@@ -183,7 +186,7 @@ export function PyramidCanvas({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, theme]);
 
   // Handle window resize
   useEffect(() => {

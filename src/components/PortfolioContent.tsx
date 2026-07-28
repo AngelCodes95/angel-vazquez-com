@@ -11,6 +11,7 @@ interface PortfolioContentProps {
   isMobileMenuOpen: boolean;
   onMobileMenuToggle: () => void;
   showTechInfo: boolean;
+  isChatActive: boolean;
 }
 
 export function PortfolioContent({
@@ -23,6 +24,7 @@ export function PortfolioContent({
   isMobileMenuOpen,
   onMobileMenuToggle,
   showTechInfo,
+  isChatActive,
 }: PortfolioContentProps) {
   const textColor = theme === 'light' ? 'text-black' : 'text-white';
   const bgColor = theme === 'light' ? 'bg-black' : 'bg-white';
@@ -30,10 +32,10 @@ export function PortfolioContent({
 
   return (
     <>
-      {/* Backdrop overlay - mobile only, when menu is open */}
+      {/* Click-catcher - mobile only, closes menu on outside tap. No dimming so the chat stays fully visible behind the compact dropdown. */}
       {isMobileMenuOpen && (
         <div
-          className="xl:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-overlay transition-opacity duration-300"
+          className="xl:hidden fixed inset-0 z-overlay"
           onClick={onMobileMenuToggle}
         />
       )}
@@ -59,13 +61,20 @@ export function PortfolioContent({
         </svg>
       </button>
 
-      {/* Triangle content - always visible on desktop, toggleable on mobile */}
+      {/* Triangle content - always visible on desktop, toggleable on mobile.
+          On mobile it renders as a compact anchored dropdown (own card
+          background) rather than a full-screen overlay, so it never visually
+          competes with an active chat. */}
       <div
         className={`${isMobileMenuOpen ? 'flex' : 'hidden'} xl:flex fixed ${
           isMobileMenuOpen
-            ? 'top-[60px] left-4 max-w-[min(90vw,400px)] transition-transform duration-300 ease-out'
-            : 'top-[clamp(1.25rem,3.75vw,2.5rem)] left-[clamp(1.25rem,3.75vw,2.5rem)]'
-        } ${textColor} text-center z-nav pointer-events-none flex-col items-center`}
+            ? `top-[60px] left-4 max-w-[min(90vw,400px)] rounded-xl border p-4 shadow-2xl transition-transform duration-300 ease-out pointer-events-auto ${
+                theme === 'light'
+                  ? 'bg-white border-black/10'
+                  : 'bg-black border-white/20'
+              }`
+            : 'top-[clamp(1.25rem,3.75vw,2.5rem)] left-[clamp(1.25rem,3.75vw,2.5rem)] pointer-events-none'
+        } ${textColor} text-center z-nav flex-col items-center`}
         style={{
           transform: isMobileMenuOpen ? 'translateY(0)' : undefined,
         }}
@@ -301,7 +310,7 @@ export function PortfolioContent({
       </div>
 
       <div
-        className={`fixed bottom-12 right-6 md:bottom-4 md:right-4 z-controls pointer-events-auto flex-col gap-4 w-[min(200px,25vw)] ${showTechInfo ? 'hidden xl:flex' : 'flex'}`}
+        className={`fixed bottom-12 right-6 md:bottom-4 md:right-4 z-controls pointer-events-auto flex-col gap-4 w-[min(200px,25vw)] ${showTechInfo || isChatActive ? 'hidden xl:flex' : 'flex'}`}
       >
         <div className="flex flex-col gap-2">
           <label

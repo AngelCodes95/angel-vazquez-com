@@ -12,11 +12,15 @@ export function getRandomInt(min: number, max: number): number {
 }
 
 /**
- * Get a random color from the predefined color palette
+ * Get a random color from the predefined color palette, excluding whichever
+ * end of the palette would be invisible against the current background
+ * (white on light mode, black on dark mode).
  */
-export function getRandomColor(): string {
-  const index = getRandomInt(0, COLOR_PALETTE.length - 1);
-  return COLOR_PALETTE[index];
+export function getRandomColor(theme: 'light' | 'dark'): string {
+  const excluded = theme === 'light' ? '#ffffff' : '#000000';
+  const available = COLOR_PALETTE.filter((color) => color !== excluded);
+  const index = getRandomInt(0, available.length - 1);
+  return available[index];
 }
 
 /**
