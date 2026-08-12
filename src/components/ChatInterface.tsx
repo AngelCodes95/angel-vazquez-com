@@ -148,20 +148,6 @@ export function ChatInterface({
             SEND
           </button>
         </div>
-        {messages.length === 0 && (
-          <p
-            className={`w-full text-center mt-2 text-[clamp(0.65rem,1.3vw,0.75rem)] lg:text-[clamp(0.813rem,1.625vw,0.938rem)] ${
-              theme === 'light' ? 'text-black/50' : 'text-white/50'
-            }`}
-            style={{
-              fontFamily: "'Syne Mono', monospace",
-              WebkitFontSmoothing: 'antialiased',
-              MozOsxFontSmoothing: 'grayscale',
-            }}
-          >
-            First reply may take a few extra seconds
-          </p>
-        )}
         <div className="w-full">
           <button
             onClick={(e) => {
