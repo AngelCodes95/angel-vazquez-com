@@ -271,10 +271,10 @@ export function ChatInterface({
                           relevant, not just similar
                         </li>
                         <li>
-                          <strong>Resilient inference:</strong> Mistral runs
-                          locally via Ollama. If it's busy, it fails over to
-                          Groq's cloud API (Llama 3.3 70B) so you're not stuck
-                          waiting
+                          <strong>Resilient inference:</strong> answers come
+                          from Groq's cloud API (Llama 3.3 70B) first. If that's
+                          unavailable, it fails over to Mistral running locally
+                          via Ollama so you still get an answer
                         </li>
                         <li>
                           <strong>Defense in depth:</strong> input gets checked
@@ -296,7 +296,7 @@ export function ChatInterface({
                   </div>
                   <p className="m-0">
                     <strong>Tech stack:</strong> TypeScript, Docker, Express.js,
-                    ChromaDB, Ollama (Mistral), Groq (Llama 3.3 70B fallback),
+                    ChromaDB, Groq (Llama 3.3 70B), Ollama (Mistral fallback),
                     Cohere Rerank, Redis, Cloudflare Tunnel
                   </p>
                   <p className="m-0 text-[clamp(0.7rem,1.5vw,0.8rem)]">
@@ -305,9 +305,9 @@ export function ChatInterface({
                     attempts.
                   </p>
                   <p className="m-0 text-[clamp(0.7rem,1.5vw,0.8rem)] italic">
-                    <strong>Note:</strong> Small language models can be
-                    unpredictable. I'm still improving this, so answer quality
-                    may vary. For specific details, you can always check my{' '}
+                    <strong>Note:</strong> This is still a work in progress, so
+                    answer quality may vary. For specific details, you can
+                    always check my{' '}
                     <a
                       href="https://portfolio.angel-vazquez.com"
                       target="_blank"
