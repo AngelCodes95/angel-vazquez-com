@@ -258,7 +258,7 @@ export function ChatInterface({
                         </li>
                         <li>
                           <strong>Resilient inference:</strong> answers come
-                          from Groq's cloud API (Llama 3.3 70B) first. If that's
+                          from Groq's cloud API (GPT-OSS 120B) first. If that's
                           unavailable, it fails over to Mistral running locally
                           via Ollama so you still get an answer
                         </li>
@@ -282,7 +282,7 @@ export function ChatInterface({
                   </div>
                   <p className="m-0">
                     <strong>Tech stack:</strong> TypeScript, Docker, Express.js,
-                    ChromaDB, Groq (Llama 3.3 70B), Ollama (Mistral fallback),
+                    ChromaDB, Groq (GPT-OSS 120B), Ollama (Mistral fallback),
                     Cohere Rerank, Redis, Cloudflare Tunnel
                   </p>
                   <p className="m-0 text-[clamp(0.7rem,1.5vw,0.8rem)]">
