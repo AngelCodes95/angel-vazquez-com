@@ -1,0 +1,101 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const sections = [
+  {
+    heading: 'What gets collected',
+    items: [
+      'Your message text, sent to the AI model that generates a response',
+      'Your IP address, used briefly to enforce rate limits (expires automatically within 24 hours), and stored in a one way hashed form, not reversible to your actual IP, in logs kept for up to 120 days for quality review, then deleted',
+      'Question and response pairs are logged to check whether answers are accurate and to improve them over time',
+    ],
+  },
+  {
+    heading: 'What does not happen',
+    items: [
+      'No account, no login, no tracking cookies',
+      'Your data is never sold or used for advertising',
+      "The assistant is instructed not to volunteer personal details about Angel beyond what's relevant to evaluating him professionally, and it screens for and declines requests involving sensitive personal information, from you or about Angel",
+    ],
+  },
+];
+---
+
+<Layout title="Privacy Policy - Angel Vazquez" scrollable={true}>
+  <main
+    class="min-h-screen bg-black text-white px-6 py-16 md:py-24"
+    style={{ fontFamily: "'Syne Mono', monospace" }}
+  >
+    <div class="max-w-[680px] mx-auto">
+      <a
+        href="/"
+        class="text-[clamp(0.75rem,1.5vw,0.875rem)] text-white/50 hover:text-white/90 transition-colors underline"
+      >
+        &larr; Back
+      </a>
+
+      <h1 class="text-[clamp(1.5rem,4vw,2.25rem)] font-bold mt-6 mb-2">
+        Privacy Policy
+      </h1>
+      <p
+        class="text-[clamp(0.85rem,2vw,1rem)] text-white/70 mb-10 leading-relaxed"
+      >
+        This chat assistant is a personal project built by Angel Vazquez. Here's
+        what happens when you use it, in plain terms.
+      </p>
+
+      {
+        sections.map((section) => (
+          <section class="mb-8">
+            <h2 class="text-[clamp(1rem,2.5vw,1.25rem)] font-bold mb-3">
+              {section.heading}
+            </h2>
+            <ul class="list-disc pl-5 space-y-2 text-[clamp(0.85rem,2vw,1rem)] text-white/80 leading-relaxed">
+              {section.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+
+      <section class="mb-8">
+        <h2 class="text-[clamp(1rem,2.5vw,1.25rem)] font-bold mb-3">
+          Who sees your message
+        </h2>
+        <p class="text-[clamp(0.85rem,2vw,1rem)] text-white/80 leading-relaxed">
+          To generate a response, your message is sent to Groq, a cloud AI
+          provider, by default, or to a model running locally on Angel's own
+          hardware if Groq is unavailable. Retrieval uses Cohere to help find
+          relevant information. These providers process the message to generate
+          the response and do not use it to identify you personally.
+        </p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-[clamp(1rem,2.5vw,1.25rem)] font-bold mb-3">
+          Questions or requests
+        </h2>
+        <p class="text-[clamp(0.85rem,2vw,1rem)] text-white/80 leading-relaxed">
+          Reach out through the
+          {' '}
+          <a
+            href="https://github.com/angelcodes95"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline hover:text-white transition-colors">GitHub</a
+          >
+          {' '}or{' '}
+          <a
+            href="https://linkedin.com/in/angelthedev"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline hover:text-white transition-colors">LinkedIn</a
+          >
+          {' '}links if you want something removed or have a question about
+          this.
+        </p>
+      </section>
+    </div>
+  </main>
+</Layout>

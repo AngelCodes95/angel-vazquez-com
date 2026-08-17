@@ -176,6 +176,7 @@ export function PortfolioApp() {
         onMobileMenuToggle={handleMobileMenuToggle}
         showTechInfo={showTechInfo}
         isChatActive={chatMessages.length > 0}
+        onTechInfoToggle={handleTechInfoToggle}
       />
       <ChatInterface
         theme={theme}

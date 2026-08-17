@@ -14,6 +14,13 @@ interface ChatInterfaceProps {
   onTechInfoToggle: () => void;
 }
 
+const SUGGESTED_PROMPTS = [
+  'What are you looking for in your next role?',
+  'Tell me about a time you failed',
+  "How do you evaluate a RAG system's answers?",
+  'Why are you leaving freelance work?',
+];
+
 export function ChatInterface({
   theme,
   messages,
@@ -71,7 +78,15 @@ export function ChatInterface({
   return (
     <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[clamp(330px,95vw,770px)] lg:w-[clamp(330px,95vw,963px)] z-base flex flex-col items-center justify-center">
       {/* Messages container - positioned above input with proper spacing */}
-      <div className="w-full max-h-[50vh] overflow-y-auto px-4 mb-6">
+      <div
+        className="w-full max-h-[50vh] overflow-y-auto px-4 py-6 mb-6 backdrop-blur-md"
+        style={{
+          maskImage:
+            'linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)',
+        }}
+      >
         {messages.length === 0 ? (
           <div
             className={`text-center mb-4 ${theme === 'light' ? 'text-black' : 'text-white'}`}
@@ -148,26 +163,48 @@ export function ChatInterface({
             SEND
           </button>
         </div>
-        <div className="w-full">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onTechInfoToggle();
-            }}
-            className={`mx-auto block mt-2 text-[clamp(0.65rem,1.3vw,0.75rem)] lg:text-[clamp(0.813rem,1.625vw,0.938rem)] ${
-              theme === 'light'
-                ? 'text-black/50 hover:text-black/80'
-                : 'text-white/50 hover:text-white/80'
-            } transition-colors underline`}
-            style={{
-              fontFamily: "'Syne Mono', monospace",
-              WebkitFontSmoothing: 'antialiased',
-              MozOsxFontSmoothing: 'grayscale',
-            }}
-          >
-            What is this and how does it work under the hood?
-          </button>
-        </div>
+        {messages.length === 0 && (
+          <div className="w-full">
+            <div className="flex flex-wrap justify-center items-center gap-2 mt-2">
+              {SUGGESTED_PROMPTS.map((prompt) => (
+                <button
+                  key={prompt}
+                  onClick={() => {
+                    onSendMessage(prompt);
+                  }}
+                  disabled={isInputDisabled}
+                  className={`rounded-full border px-3 py-1.5 text-[clamp(0.65rem,1.3vw,0.75rem)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    theme === 'light'
+                      ? 'border-black/20 text-black/70 hover:bg-black/5 hover:text-black'
+                      : 'border-white/20 text-white/70 hover:bg-white/10 hover:text-white'
+                  }`}
+                  style={{
+                    fontFamily: "'Syne Mono', monospace",
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                  }}
+                >
+                  {prompt}
+                </button>
+              ))}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTechInfoToggle();
+                }}
+                aria-label="What is this and how does it work under the hood?"
+                title="What is this and how does it work under the hood?"
+                className="flex items-center justify-center w-8 h-8 rounded-full text-[0.85rem] font-bold text-black transition-transform hover:scale-110 shrink-0"
+                style={{
+                  backgroundColor: '#00d4aa',
+                  fontFamily: "'Syne Mono', monospace",
+                }}
+              >
+                ?
+              </button>
+            </div>
+          </div>
+        )}
 
         {showTechInfo &&
           createPortal(
@@ -211,10 +248,10 @@ export function ChatInterface({
                 <div
                   className={`text-[clamp(0.75rem,1.8vw,0.875rem)] space-y-3`}
                 >
+                  <h2 className="text-[clamp(1.1rem,3vw,1.4rem)] font-bold m-0">
+                    What is this?
+                  </h2>
                   <div>
-                    <p className="m-0 mb-2">
-                      <strong>In plain terms:</strong>
-                    </p>
                     <p className="m-0">
                       I built this to answer questions about my background,
                       skills, and projects, so you don't have to scroll a
@@ -259,8 +296,8 @@ export function ChatInterface({
                         <li>
                           <strong>Resilient inference:</strong> answers come
                           from Groq's cloud API (GPT-OSS 120B) first. If that's
-                          unavailable, it fails over to Mistral running locally
-                          via Ollama so you still get an answer
+                          ever unavailable, an automatic backup kicks in so you
+                          still get an answer
                         </li>
                         <li>
                           <strong>Defense in depth:</strong> input gets checked
@@ -282,13 +319,20 @@ export function ChatInterface({
                   </div>
                   <p className="m-0">
                     <strong>Tech stack:</strong> TypeScript, Docker, Express.js,
-                    ChromaDB, Groq (GPT-OSS 120B), Ollama (Mistral fallback),
-                    Cohere Rerank, Redis, Cloudflare Tunnel
+                    ChromaDB, Groq (GPT-OSS 120B), Ollama (backup), Cohere
+                    Rerank, Redis, Cloudflare Tunnel
                   </p>
                   <p className="m-0 text-[clamp(0.7rem,1.5vw,0.8rem)]">
                     Limited to 21 questions a day per visitor, plus burst
                     protection. Hardened against prompt injection and jailbreak
-                    attempts.
+                    attempts. See the{' '}
+                    <a
+                      href="/privacy"
+                      className={`underline ${theme === 'light' ? 'text-black/90 hover:text-black' : 'text-white/90 hover:text-white'} transition-colors`}
+                    >
+                      privacy policy
+                    </a>{' '}
+                    for details on what's collected.
                   </p>
                   <p className="m-0 text-[clamp(0.7rem,1.5vw,0.8rem)] italic">
                     <strong>Note:</strong> This is still a work in progress, so

@@ -12,6 +12,7 @@ interface PortfolioContentProps {
   onMobileMenuToggle: () => void;
   showTechInfo: boolean;
   isChatActive: boolean;
+  onTechInfoToggle: () => void;
 }
 
 export function PortfolioContent({
@@ -25,6 +26,7 @@ export function PortfolioContent({
   onMobileMenuToggle,
   showTechInfo,
   isChatActive,
+  onTechInfoToggle,
 }: PortfolioContentProps) {
   const textColor = theme === 'light' ? 'text-black' : 'text-white';
   const bgColor = theme === 'light' ? 'bg-black' : 'bg-white';
@@ -367,6 +369,44 @@ export function PortfolioContent({
             className={`w-full h-1 ${theme === 'light' ? 'bg-black/30' : 'bg-white/30'} rounded-lg appearance-none cursor-pointer focus:outline-none focus-visible:ring-2 ${theme === 'light' ? 'focus-visible:ring-black' : 'focus-visible:ring-white'} focus-visible:ring-offset-2 focus-visible:ring-offset-transparent [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full ${theme === 'light' ? '[&::-webkit-slider-thumb]:bg-black' : '[&::-webkit-slider-thumb]:bg-white'} [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full ${theme === 'light' ? '[&::-moz-range-thumb]:bg-black' : '[&::-moz-range-thumb]:bg-white'} [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-transform [&::-moz-range-thumb]:hover:scale-110`}
           />
         </div>
+      </div>
+
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-controls flex items-center gap-2">
+        {isChatActive && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onTechInfoToggle();
+            }}
+            aria-label="What is this and how does it work under the hood?"
+            title="What is this and how does it work under the hood?"
+            className="flex items-center justify-center w-4 h-4 rounded-full text-[0.55rem] font-bold text-black transition-transform hover:scale-110 pointer-events-auto shrink-0"
+            style={{
+              backgroundColor: '#00d4aa',
+              fontFamily: "'Syne Mono', monospace",
+            }}
+          >
+            ?
+          </button>
+        )}
+        <a
+          href="/privacy"
+          aria-label="Privacy Policy"
+          className={`pointer-events-auto transition-colors ${
+            theme === 'light'
+              ? 'text-black/50 hover:text-black/80'
+              : 'text-white/50 hover:text-white/80'
+          }`}
+          style={{
+            fontFamily: "'Syne Mono', monospace",
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+          }}
+        >
+          <span className="text-[clamp(0.6rem,1.5vw,0.8rem)] whitespace-nowrap">
+            PRIVACY POLICY
+          </span>
+        </a>
       </div>
     </>
   );
