@@ -1,15 +1,15 @@
 @import 'tailwindcss';
 
 @theme {
-  --z-background: 0;
-  --z-canvas: 1;
-  --z-base: 10;
-  --z-controls: 20;
-  --z-overlay: 30;
-  --z-nav: 40;
-  --z-nav-button: 50;
-  --z-modal-backdrop: 60;
-  --z-modal: 70;
+  --z-index-background: 0;
+  --z-index-canvas: 1;
+  --z-index-base: 10;
+  --z-index-controls: 20;
+  --z-index-overlay: 30;
+  --z-index-nav: 40;
+  --z-index-nav-button: 50;
+  --z-index-modal-backdrop: 60;
+  --z-index-modal: 70;
 }
 
 @font-face {
