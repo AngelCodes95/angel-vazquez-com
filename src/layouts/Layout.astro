@@ -3,25 +3,22 @@ import '../styles/global.css';
 
 interface Props {
   title: string;
-  scrollable?: boolean;
+  description?: string;
 }
 
-const { title, scrollable = false } = Astro.props;
+const {
+  title,
+  description = 'Angel Vazquez, software engineer. Book time on my calendar or send me a message about your next role.',
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"
-    />
-    <meta
-      name="description"
-      content="Angel Vazquez - Software Engineer portfolio with a self-hosted AI concierge you can chat with about my background, skills, and projects."
-    />
-    <meta name="theme-color" content="#000000" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
@@ -29,10 +26,7 @@ const { title, scrollable = false } = Astro.props;
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://angel-vazquez.com/" />
     <meta property="og:title" content="Angel Vazquez - Software Engineer" />
-    <meta
-      property="og:description"
-      content="Software Engineer portfolio with a self-hosted AI concierge you can chat with about my background, skills, and projects."
-    />
+    <meta property="og:description" content={description} />
     <meta
       property="og:image"
       content="https://angel-vazquez.com/og-image.png"
@@ -45,10 +39,7 @@ const { title, scrollable = false } = Astro.props;
       property="twitter:title"
       content="Angel Vazquez - Software Engineer"
     />
-    <meta
-      property="twitter:description"
-      content="Software Engineer portfolio with a self-hosted AI concierge you can chat with about my background, skills, and projects."
-    />
+    <meta property="twitter:description" content={description} />
     <meta
       property="twitter:image"
       content="https://angel-vazquez.com/og-image.png"
@@ -58,23 +49,19 @@ const { title, scrollable = false } = Astro.props;
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
+
+    <!-- Applied before first paint to avoid a light/dark flash. -->
+    <script is:inline>
+      (function () {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.dataset.theme = saved;
+        }
+      })();
+    </script>
   </head>
   <body
-    class={`m-0 p-0 font-sans ${scrollable ? 'overflow-y-auto' : 'overflow-hidden'}`}
+    class="m-0 flex min-h-[100dvh] flex-col p-0 font-mono sm:block sm:min-h-screen"
   >
     <slot />
   </body>

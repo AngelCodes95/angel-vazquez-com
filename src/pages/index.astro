@@ -1,8 +1,285 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { PortfolioApp } from '../components/PortfolioApp';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { ConciergeButler } from '../components/ConciergeButler';
+
+const CALENDLY_URL = 'https://calendly.com/angelcodes95';
 ---
 
 <Layout title="Angel Vazquez - Software Engineer">
-  <PortfolioApp client:load />
+  <main
+    class="flex flex-1 flex-col justify-center px-6 py-10 md:px-10 md:py-28"
+  >
+    <div class="mx-auto max-w-[46rem]">
+      <div>
+        <h1
+          class="font-mono text-[clamp(2.25rem,6vw,3.75rem)] leading-[1.05] font-bold text-[var(--text)]"
+        >
+          Angel Vazquez
+        </h1>
+        <p
+          class="mt-2 font-sans text-[1.25rem] text-[var(--text)] sm:text-[1.5rem]"
+        >
+          Software Engineer
+        </p>
+        <div class="mt-3 flex items-center gap-4">
+          <a
+            href="https://github.com/AngelCodes95"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            class="text-[var(--text)] transition-colors hover:text-[var(--accent)]"
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.73.81 1.18 1.83 1.18 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.07.78 2.16 0 1.56-.01 2.82-.01 3.2 0 .31.2.67.8.56A10.51 10.51 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5Z"
+              ></path>
+            </svg>
+          </a>
+          <a
+            href="https://linkedin.com/in/angelthedev"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            class="text-[var(--text)] transition-colors hover:text-[var(--accent)]"
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.75C24 .78 23.2 0 22.22 0Z"
+              ></path>
+            </svg>
+          </a>
+          <a
+            href="https://portfolio.angel-vazquez.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Portfolio"
+            class="text-[var(--text)] transition-colors hover:text-[var(--accent)]"
+          >
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <circle cx="12" cy="12" r="9.5"></circle>
+              <path
+                d="M2.5 12h19M12 2.5c2.5 2.6 3.8 6 3.8 9.5s-1.3 6.9-3.8 9.5c-2.5-2.6-3.8-6-3.8-9.5S9.5 5.1 12 2.5Z"
+              ></path>
+            </svg>
+          </a>
+          <ThemeToggle />
+        </div>
+      </div>
+
+      <div
+        class="mt-8 flex flex-col gap-5 font-mono text-[1.125rem] leading-normal text-[var(--text)] md:gap-6 md:text-[1.25rem] md:leading-relaxed"
+      >
+        <p class="m-0">Hi there!</p>
+
+        <p class="m-0">
+          I'm a full-stack developer based in La Jolla, California. I spent
+          years in sales before I ever wrote a line of code, and that
+          combination is rare. It's exactly what Forward Deployed Engineer roles
+          are built around, which is why I'm currently looking at full-time FDE
+          roles, along with more traditional software engineering positions.
+        </p>
+
+        <p class="m-0 hidden sm:block">
+          Reach out using the buttons below, or see more of my work on my{' '}
+          <a
+            href="https://portfolio.angel-vazquez.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[var(--accent)] underline decoration-[var(--accent)]/40 underline-offset-2 transition-opacity hover:opacity-70"
+          >
+            full portfolio
+          </a>.
+        </p>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-4 md:mt-10">
+        <button
+          type="button"
+          id="toggle-book-a-call"
+          class="border border-[var(--border)] px-6 py-3 font-mono text-[1.0625rem] text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+        >
+          Book a call
+        </button>
+        <button
+          type="button"
+          id="toggle-send-a-message"
+          class="border border-[var(--border)] px-6 py-3 font-mono text-[1.0625rem] text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+        >
+          Send a message
+        </button>
+      </div>
+
+      <div
+        id="book-a-call-backdrop"
+        class="modal-backdrop fixed inset-0 z-modal-backdrop flex items-center justify-center bg-black/50 p-4"
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="book-a-call-title"
+          class="modal-panel max-h-[85vh] w-full max-w-[40rem] overflow-y-auto border border-[var(--border)] bg-[var(--surface)] p-5"
+        >
+          <div class="flex items-center justify-between">
+            <p
+              id="book-a-call-title"
+              class="m-0 font-mono text-[0.875rem] text-[var(--text-subtle)] uppercase"
+            >
+              Book a call
+            </p>
+            <button
+              type="button"
+              id="close-book-a-call"
+              aria-label="Close"
+              class="text-[1.25rem] text-[var(--text)] transition-colors hover:text-[var(--accent)]"
+            >
+              &#10005;
+            </button>
+          </div>
+          <div class="mt-3">
+            <div
+              class="calendly-inline-widget"
+              data-url={CALENDLY_URL}
+              style="min-width:280px;height:640px;"
+            >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="send-a-message-backdrop"
+        class="modal-backdrop fixed inset-0 z-modal-backdrop flex items-center justify-center bg-black/50 p-4"
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="send-a-message-title"
+          class="modal-panel max-h-[85vh] w-full max-w-[28rem] overflow-y-auto border border-[var(--border)] bg-[var(--surface)] p-5"
+        >
+          <div class="flex items-center justify-between">
+            <p
+              id="send-a-message-title"
+              class="m-0 font-mono text-[0.875rem] text-[var(--text-subtle)] uppercase"
+            >
+              Send a message
+            </p>
+            <button
+              type="button"
+              id="close-send-a-message"
+              aria-label="Close"
+              class="text-[1.25rem] text-[var(--text)] transition-colors hover:text-[var(--accent)]"
+            >
+              &#10005;
+            </button>
+          </div>
+          <div class="mt-3">
+            <ContactForm />
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function setupModal(
+          backdropId: string,
+          toggleId: string,
+          closeId: string
+        ) {
+          const backdrop = document.getElementById(backdropId);
+          const toggle = document.getElementById(toggleId);
+          const close = document.getElementById(closeId);
+          if (backdrop === null || toggle === null) return;
+
+          backdrop.inert = true;
+
+          function open() {
+            if (backdrop === null) return;
+            backdrop.inert = false;
+            backdrop.classList.add('is-open');
+            close?.focus();
+            document.addEventListener('keydown', onKeydown);
+          }
+
+          function closeModal() {
+            if (backdrop === null) return;
+            backdrop.classList.remove('is-open');
+            backdrop.inert = true;
+            toggle?.focus();
+            document.removeEventListener('keydown', onKeydown);
+          }
+
+          function onKeydown(e: KeyboardEvent) {
+            if (e.key === 'Escape') closeModal();
+          }
+
+          toggle.addEventListener('click', open);
+          close?.addEventListener('click', closeModal);
+          backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) closeModal();
+          });
+        }
+
+        setupModal(
+          'book-a-call-backdrop',
+          'toggle-book-a-call',
+          'close-book-a-call'
+        );
+        setupModal(
+          'send-a-message-backdrop',
+          'toggle-send-a-message',
+          'close-send-a-message'
+        );
+      </script>
+    </div>
+  </main>
+
+  <footer class="page-footer shrink-0 px-6 pt-3 pb-5 md:px-10 md:pt-6 md:pb-8">
+    <p
+      class="mx-auto max-w-[46rem] font-mono text-[0.75rem] whitespace-nowrap text-[var(--text-subtle)] sm:text-[0.9375rem]"
+    >
+      &copy; {new Date().getFullYear()} Angel Vazquez ·{' '}
+      <a
+        href="https://portfolio.angel-vazquez.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline hover:text-[var(--accent)]"
+      >
+        Portfolio</a
+      >{' '}
+      ·{' '}
+      <a href="/privacy" class="underline hover:text-[var(--accent)]">Privacy</a
+      >
+    </p>
+  </footer>
+
+  <ConciergeButler client:idle />
+
+  <script
+    is:inline
+    src="https://assets.calendly.com/assets/external/widget.js"
+    async></script>
+
+  <style>
+    /* The footer sits at the true bottom of the screen on mobile (see the
+       flex-col/min-h-dvh body + flex-1 main in Layout.astro), the same row
+       the concierge avatar occupies. Rather than pushing the whole footer
+       up to dodge it (which just recreates dead space above it), reserve
+       exactly the avatar's real measured width so the footer text stops
+       short of it horizontally. --concierge-avatar-width comes from
+       ConciergeButler.tsx via ResizeObserver, not a guess. Desktop doesn't
+       need this: the footer isn't bottom-pinned there. */
+    @media (max-width: 639px) {
+      .page-footer {
+        padding-right: calc(var(--concierge-avatar-width, 6rem) + 1rem);
+      }
+    }
+  </style>
 </Layout>

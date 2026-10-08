@@ -7,7 +7,7 @@ import astro from 'eslint-plugin-astro';
 
 export default tseslint.config(
   {
-    ignores: ['dist/', 'node_modules/', '.astro/', 'legacy/'],
+    ignores: ['dist/', 'node_modules/', '.astro/', 'legacy/', 'worker/'],
   },
   js.configs.recommended,
   ...astro.configs.recommended,

@@ -1,49 +1,25 @@
 import type { Message } from '../types';
-import type { Theme } from './PortfolioApp';
 
 interface ChatMessageProps {
   message: Message;
-  theme: Theme;
 }
 
-export function ChatMessage({ message, theme }: ChatMessageProps) {
+export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div
-        className={`max-w-[80%] rounded-lg px-4 py-2 ${
+        className={`max-w-[85%] border px-3 py-2 font-mono text-[0.8125rem] leading-relaxed ${
           isUser
-            ? theme === 'light'
-              ? 'bg-black text-white'
-              : 'bg-white text-black'
-            : theme === 'light'
-              ? 'bg-black/10 text-black'
-              : 'bg-white/10 text-white'
+            ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]'
+            : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)]'
         }`}
-        style={{
-          fontFamily: "'Syne Mono', monospace",
-          WebkitFontSmoothing: 'antialiased',
-          MozOsxFontSmoothing: 'grayscale',
-        }}
       >
-        <p
-          className="text-[clamp(0.85rem,2.2vw,1rem)] lg:text-[clamp(1.063rem,2.75vw,1.25rem)] m-0 whitespace-pre-wrap break-words"
-          style={{
-            fontFamily: "'Commit Mono', monospace",
-            WebkitFontSmoothing: 'antialiased',
-            MozOsxFontSmoothing: 'grayscale',
-          }}
-        >
+        <p className="m-0 whitespace-pre-wrap break-words">
           {message.content}
           {message.isStreaming === true && (
-            <span
-              className={`inline-block ml-[1px] animate-pulse ${
-                theme === 'light' ? 'text-black' : 'text-white'
-              }`}
-            >
-              ▌
-            </span>
+            <span className="ml-[1px] inline-block animate-pulse">▌</span>
           )}
         </p>
       </div>

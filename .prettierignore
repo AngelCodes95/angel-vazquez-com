@@ -3,3 +3,6 @@ dist/
 .astro/
 package-lock.json
 legacy/
+worker/node_modules/
+worker/.wrangler/
+worker/worker-configuration.d.ts
