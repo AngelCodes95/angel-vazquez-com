@@ -18,9 +18,60 @@ export function ConciergeButler() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
   const avatarRef = useRef<HTMLButtonElement>(null);
+  // Starts hidden so there's no flash of the bubble before the effect
+  // below can determine whether this is a desktop (always show) or mobile
+  // (pulse) viewport — it corrects to visible almost immediately on
+  // desktop, which is unnoticeable, versus a visible-then-hidden flash on
+  // mobile, which was the actual bug.
+  const [showBubble, setShowBubble] = useState(false);
 
   const isStreaming = messages.some((msg) => msg.isStreaming === true);
   const isBusy = isLoading || isStreaming;
+
+  // On mobile, the speech bubble only pulses into view briefly every 10s
+  // instead of staying permanently on screen, it was eating too much of a
+  // small viewport. Desktop keeps it always on. Respects reduced-motion by
+  // just leaving it visible rather than cycling.
+  useEffect(() => {
+    const mobileQuery = window.matchMedia('(max-width: 639px)');
+    const reducedMotionQuery = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+
+    let pulseInterval: ReturnType<typeof setInterval> | undefined;
+    let hideTimeout: ReturnType<typeof setTimeout> | undefined;
+
+    const clearTimers = () => {
+      if (pulseInterval !== undefined) clearInterval(pulseInterval);
+      if (hideTimeout !== undefined) clearTimeout(hideTimeout);
+    };
+
+    const sync = () => {
+      clearTimers();
+      const shouldPulse = mobileQuery.matches && !reducedMotionQuery.matches;
+      if (!shouldPulse) {
+        setShowBubble(true);
+        return;
+      }
+      setShowBubble(false);
+      pulseInterval = setInterval(() => {
+        setShowBubble(true);
+        hideTimeout = setTimeout(() => {
+          setShowBubble(false);
+        }, 4000);
+      }, 10000);
+    };
+
+    sync();
+    mobileQuery.addEventListener('change', sync);
+    reducedMotionQuery.addEventListener('change', sync);
+
+    return () => {
+      clearTimers();
+      mobileQuery.removeEventListener('change', sync);
+      reducedMotionQuery.removeEventListener('change', sync);
+    };
+  }, []);
 
   // Publish the widget's real rendered size as CSS vars, so the page can
   // reserve exactly enough room around it with no hardcoded guesses.
@@ -259,12 +310,12 @@ export function ConciergeButler() {
         </div>
       )}
 
-      {!isOpen && (
+      {!isOpen && showBubble && (
         <button
           onClick={() => {
             setIsOpen(true);
           }}
-          className="relative max-w-[15rem] rounded-2xl border-2 border-[var(--accent)] bg-[var(--surface)] px-4 py-2.5 text-left font-mono text-[0.8125rem] text-[var(--text)]"
+          className="animate-pop-in relative max-w-[15rem] rounded-2xl border-2 border-[var(--accent)] bg-[var(--surface)] px-4 py-2.5 text-left font-mono text-[0.8125rem] text-[var(--text)]"
         >
           Talk with me about my human, he can make RAG chatbots too!
           <span
