@@ -3,17 +3,13 @@
   "name": "angel-vazquez-contact-form",
   "main": "src/index.ts",
   "compatibility_date": "2026-01-01",
-  "send_email": [
-    {
-      "name": "EMAIL",
-      "remote": true,
-    },
-  ],
   "vars": {
-    // TODO(angel): must be an address on a domain you've onboarded via
-    // `npx wrangler email sending enable yourdomain.com`.
+    // Must be an address on a domain you've verified with Resend
+    // (resend.com/domains). The visitor's own address goes in reply-to, so
+    // this address itself is never shown to them, it just needs to exist.
     "CONTACT_FROM_EMAIL": "contact@angel-vazquez.com",
-    // TODO(angel): where form submissions land. Can be your secondary inbox.
-    "CONTACT_DESTINATION_EMAIL": "you@example.com",
+    "CONTACT_DESTINATION_EMAIL": "ask.about.web.dev@gmail.com",
   },
+  // RESEND_API_KEY is a secret, not a var: set it with
+  // `npx wrangler secret put RESEND_API_KEY`, never written to this file.
 }

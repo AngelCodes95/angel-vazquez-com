@@ -80,24 +80,37 @@ export default {
     }
 
     const { email, message } = body;
-    // Strip any CR/LF before this reaches the Subject line. Cloudflare's
-    // Email Sending binding is a structured API, not raw MIME text we
-    // build ourselves, so header injection here is unproven either way,
-    // but stripping is free and removes the ambiguity entirely.
+    // Strip any CR/LF before this reaches the Subject line. Resend's API is
+    // a structured JSON call, not raw MIME text we build ourselves, so
+    // header injection here is unproven either way, but stripping is free
+    // and removes the ambiguity entirely.
     const name = body.name.replace(/[\r\n]+/g, ' ').trim();
 
     try {
-      await env.EMAIL.send({
-        to: env.CONTACT_DESTINATION_EMAIL,
-        from: {
-          email: env.CONTACT_FROM_EMAIL,
-          name: 'angel-vazquez.com contact form',
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
         },
-        replyTo: email,
-        subject: `New message from ${name}`,
-        text: `From: ${name} <${email}>\n\n${message}`,
-        html: `<p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
+        body: JSON.stringify({
+          from: `angel-vazquez.com contact form <${env.CONTACT_FROM_EMAIL}>`,
+          to: [env.CONTACT_DESTINATION_EMAIL],
+          reply_to: email,
+          subject: `New message from ${name}`,
+          text: `From: ${name} <${email}>\n\n${message}`,
+          html: `<p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
+        }),
       });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error('Resend rejected the email', response.status, errorBody);
+        return new Response('Failed to send message', {
+          status: 502,
+          headers,
+        });
+      }
     } catch (error) {
       console.error('Failed to send contact email', error);
       return new Response('Failed to send message', { status: 502, headers });

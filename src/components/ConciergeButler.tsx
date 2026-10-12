@@ -18,12 +18,16 @@ export function ConciergeButler() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
   const avatarRef = useRef<HTMLButtonElement>(null);
-  // Starts hidden so there's no flash of the bubble before the effect
-  // below can determine whether this is a desktop (always show) or mobile
-  // (pulse) viewport — it corrects to visible almost immediately on
-  // desktop, which is unnoticeable, versus a visible-then-hidden flash on
-  // mobile, which was the actual bug.
-  const [showBubble, setShowBubble] = useState(false);
+  // 'hidden' unmounts the bubble entirely (so it doesn't reserve layout
+  // space above the avatar between pulses). 'hiding' is a brief transition
+  // state: still mounted, faded to opacity 0, so it disappears smoothly
+  // instead of vanishing instantly, then it unmounts once the fade
+  // finishes. Starts hidden so there's no flash before the effect below
+  // can tell desktop (always show) from mobile (pulse) apart.
+  const [bubblePhase, setBubblePhase] = useState<
+    'hidden' | 'visible' | 'hiding'
+  >('hidden');
+  const FADE_OUT_MS = 200;
 
   const isStreaming = messages.some((msg) => msg.isStreaming === true);
   const isBusy = isLoading || isStreaming;
@@ -40,24 +44,29 @@ export function ConciergeButler() {
 
     let pulseInterval: ReturnType<typeof setInterval> | undefined;
     let hideTimeout: ReturnType<typeof setTimeout> | undefined;
+    let unmountTimeout: ReturnType<typeof setTimeout> | undefined;
 
     const clearTimers = () => {
       if (pulseInterval !== undefined) clearInterval(pulseInterval);
       if (hideTimeout !== undefined) clearTimeout(hideTimeout);
+      if (unmountTimeout !== undefined) clearTimeout(unmountTimeout);
     };
 
     const sync = () => {
       clearTimers();
       const shouldPulse = mobileQuery.matches && !reducedMotionQuery.matches;
       if (!shouldPulse) {
-        setShowBubble(true);
+        setBubblePhase('visible');
         return;
       }
-      setShowBubble(false);
+      setBubblePhase('hidden');
       pulseInterval = setInterval(() => {
-        setShowBubble(true);
+        setBubblePhase('visible');
         hideTimeout = setTimeout(() => {
-          setShowBubble(false);
+          setBubblePhase('hiding');
+          unmountTimeout = setTimeout(() => {
+            setBubblePhase('hidden');
+          }, FADE_OUT_MS);
         }, 4000);
       }, 10000);
     };
@@ -310,12 +319,15 @@ export function ConciergeButler() {
         </div>
       )}
 
-      {!isOpen && showBubble && (
+      {!isOpen && bubblePhase !== 'hidden' && (
         <button
           onClick={() => {
             setIsOpen(true);
           }}
-          className="animate-pop-in relative max-w-[15rem] rounded-2xl border-2 border-[var(--accent)] bg-[var(--surface)] px-4 py-2.5 text-left font-mono text-[0.8125rem] text-[var(--text)]"
+          inert={bubblePhase === 'hiding'}
+          className={`relative max-w-[15rem] rounded-2xl border-2 border-[var(--accent)] bg-[var(--surface)] px-4 py-2.5 text-left font-mono text-[0.8125rem] text-[var(--text)] transition-opacity duration-200 ${
+            bubblePhase === 'hiding' ? 'opacity-0' : 'animate-pop-in'
+          }`}
         >
           Talk with me about my human, he can make RAG chatbots too!
           <span

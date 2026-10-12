@@ -35,6 +35,7 @@ jobs:
         env:
           PUBLIC_CHAT_API_URL: https://chat.angel-vazquez.com
           PUBLIC_SHARED_API: ${{ secrets.PUBLIC_SHARED_API }}
+          PUBLIC_CONTACT_API_URL: https://angel-vazquez-contact-form.angel-vazquez-contact-form.workers.dev
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
