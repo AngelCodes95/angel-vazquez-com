@@ -236,7 +236,7 @@ export function ConciergeButler() {
           role="dialog"
           aria-modal="true"
           aria-label="Chat with Angel's AI concierge"
-          className="animate-pop-in z-widget-panel flex h-[min(28rem,70vh)] w-[min(22rem,90vw)] flex-col border border-[var(--border)] bg-[var(--bg-alt)]"
+          className="animate-pop-in z-widget-panel flex h-[min(28rem,70dvh)] w-[min(22rem,90vw)] flex-col border border-[var(--border)] bg-[var(--bg-alt)]"
         >
           <div className="flex items-center justify-between border-b border-[var(--border)] px-3 py-2">
             <p className="m-0 font-mono text-[0.75rem] text-[var(--text-subtle)] uppercase">
@@ -306,7 +306,7 @@ export function ConciergeButler() {
               }}
               disabled={isBusy}
               placeholder="Ask about Angel..."
-              className="flex-1 border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 font-mono text-[0.8125rem] text-[var(--text)] placeholder-[var(--text-subtle)] focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
+              className="flex-1 border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 font-mono text-base text-[var(--text)] placeholder-[var(--text-subtle)] focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
             />
             <button
               onClick={handleSubmit}
