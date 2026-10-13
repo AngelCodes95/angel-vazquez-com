@@ -22,23 +22,25 @@ Copy on this site never uses em or en dashes. Use a colon, comma, or period inst
 
 Light (`:root` default):
 
-| Token           | Value     | Use                                                                  |
-| --------------- | --------- | -------------------------------------------------------------------- |
-| `--bg`          | `#FFFFFF` | Page background (no alternating sections)                            |
-| `--surface`     | `#FFFFFF` | Modal panel background                                               |
-| `--border`      | `#E5E5E5` | Buttons, modal panels, form field underlines. Nowhere else.          |
-| `--text`        | `#171717` | All prose and headings (one tone, weight does the work)              |
-| `--text-subtle` | `#8A8A8A` | Meta only: labels, copyright line                                    |
-| `--accent`      | `#5E82A0` | Links, hover states, concierge avatar/bubble border                  |
-| `--on-accent`   | `#FFFFFF` | Text on top of an accent-filled surface (concierge send button only) |
+| Token           | Value     | Use                                                                                                                                                   |
+| --------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--bg`          | `#FFFFFF` | Page background (no alternating sections)                                                                                                             |
+| `--bg-alt`      | `#F3F4F6` | Concierge widget panel background only, deliberately distinct from `--bg` so the chat reads as a floating panel, not a page section                   |
+| `--surface`     | `#FFFFFF` | Modal panel background, and message bubbles/input nested inside the concierge panel (white-on-tinted, the layering that separates it from `--bg-alt`) |
+| `--border`      | `#E5E5E5` | Buttons, modal panels, form field underlines. Nowhere else.                                                                                           |
+| `--text`        | `#171717` | All prose and headings (one tone, weight does the work)                                                                                               |
+| `--text-subtle` | `#8A8A8A` | Meta only: labels, copyright line                                                                                                                     |
+| `--accent`      | `#5E82A0` | Links, hover states, concierge avatar/bubble border                                                                                                   |
+| `--on-accent`   | `#FFFFFF` | Text on top of an accent-filled surface (concierge send button only)                                                                                  |
 
 Dark (`[data-theme="dark"]` or system dark with no explicit choice):
 
 | Token           | Value     |
 | --------------- | --------- |
 | `--bg`          | `#141414` |
-| `--surface`     | `#141414` |
-| `--border`      | `#2B2B2B` |
+| `--bg-alt`      | `#1E1E1E` |
+| `--surface`     | `#282828` |
+| `--border`      | `#3A3A3A` |
 | `--text`        | `#F2F2F2` |
 | `--text-subtle` | `#8A8A8A` |
 | `--accent`      | `#89AFC9` |

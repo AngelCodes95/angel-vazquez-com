@@ -238,8 +238,8 @@ export function ConciergeButler() {
           aria-label="Chat with Angel's AI concierge"
           className="animate-pop-in z-widget-panel flex h-[min(28rem,70dvh)] w-[min(22rem,90vw)] flex-col border border-[var(--border)] bg-[var(--bg-alt)]"
         >
-          <div className="flex items-center justify-between border-b border-[var(--border)] px-3 py-2">
-            <p className="m-0 font-mono text-[0.75rem] text-[var(--text-subtle)] uppercase">
+          <div className="flex items-center justify-between border-b border-[var(--border)] px-3 py-2.5">
+            <p className="m-0 font-mono text-[0.8125rem] font-semibold tracking-wide text-[var(--accent)] uppercase">
               AI Concierge
             </p>
             <button
@@ -255,12 +255,12 @@ export function ConciergeButler() {
 
           <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-3 py-3">
             {messages.length === 0 ? (
-              <div className="flex flex-1 flex-col justify-end gap-2">
+              <div className="flex flex-1 flex-col justify-center gap-3">
                 <p className="m-0 font-mono text-[0.8125rem] text-[var(--text-muted)]">
                   Ask me anything about Angel&apos;s background, skills, or what
                   he&apos;s looking for.
                 </p>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-wrap gap-1.5">
                   {SUGGESTED_PROMPTS.map((prompt) => (
                     <button
                       key={prompt}
@@ -268,7 +268,7 @@ export function ConciergeButler() {
                         sendMessage(prompt);
                       }}
                       disabled={isBusy}
-                      className="border border-[var(--border)] px-2.5 py-1.5 text-left font-mono text-[0.75rem] text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)] disabled:opacity-40"
+                      className="rounded-full border border-[var(--accent)]/40 bg-[var(--surface)] px-3 py-1.5 text-left font-mono text-[0.75rem] font-medium text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent)]/10 disabled:opacity-40"
                     >
                       {prompt}
                     </button>
@@ -306,7 +306,7 @@ export function ConciergeButler() {
               }}
               disabled={isBusy}
               placeholder="Ask about Angel..."
-              className="flex-1 border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 font-mono text-base text-[var(--text)] placeholder-[var(--text-subtle)] focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
+              className="flex-1 border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 font-mono text-base text-[var(--text)] placeholder-[var(--text-subtle)] disabled:opacity-50"
             />
             <button
               onClick={handleSubmit}
